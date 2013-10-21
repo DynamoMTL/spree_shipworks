@@ -132,6 +132,7 @@ module SpreeShipworks
           order_context.element 'Items' do |items_context|
             self.line_items.each do |item|
               next if item.quantity == 0
+              next if item.product.is_gift_card?
               item.extend(LineItem)
               item.to_shipworks_xml(items_context) if item.variant.present?
             end
