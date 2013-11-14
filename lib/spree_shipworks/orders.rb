@@ -7,7 +7,7 @@ module SpreeShipworks
 
     def self.since(start_date = nil)
       scope = Spree::Order.
-                where(:state => VALID_STATES).where(shipment_state: 'ready').
+                where(:state => VALID_STATES).where(shipment_state: ['ready', 'partial']).
                 order('updated_at asc')
 
       if start_date && start_date.to_s != ''
