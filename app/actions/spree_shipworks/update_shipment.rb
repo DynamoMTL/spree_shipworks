@@ -5,7 +5,7 @@ module SpreeShipworks
     def call(params)
       order = Spree::Order.find(params['order'])
 
-      shipment = order.shipments.first
+      shipment = order.shipments.select {|s| s.state == 'ready' && s.tracking.nil? }.first
       if shipment.try(:update_attributes, { :tracking => params['tracking'] })
         response do |r|
           r.element 'UpdateSuccess'
