@@ -3,9 +3,20 @@ module SpreeShipworks
     include Dsl
 
     def call(params)
-      order = Spree::Order.find(params['order'])
+      if params['order'].to_i > SpreeShipworks::PREORDER_ORDER_ID_ADJUSTMENT
+        order_id = params['order'].to_i - SpreeShipworks::PREORDER_ORDER_ID_ADJUSTMENT
+        preorder = true
+      end
+      preorder ||= false
+      order_id ||= params['order']
 
-      shipment = order.shipments.select {|s| s.state == 'ready' && s.tracking.nil? }.first
+      order = Spree::Order.find(order_id)
+
+      if preorder
+        shipment = order.shipments.detect { |s| s.shipping_method.name == 'PreOrder' && s.state == 'ready' && s.tracking.nil? }
+      end
+      shipment ||= order.shipments.detect { |s| s.shipping_method.name != 'PreOrder' && s.state == 'ready' && s.tracking.nil? }
+
       if shipment.try(:update_attributes, { :tracking => params['tracking'] })
         response do |r|
           r.element 'UpdateSuccess'
