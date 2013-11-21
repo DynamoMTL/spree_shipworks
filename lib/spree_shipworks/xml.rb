@@ -101,7 +101,7 @@ module SpreeShipworks
     module Order
       def to_shipworks_xml(context, preorder = false)
         context.element 'Order' do |order_context|
-          new_order_id = preorder ? (30000000 + self.id) : self.id
+          new_order_id = preorder ? (SpreeShipworks::PREORDER_ORDER_ID_ADJUSTMENT + self.id) : self.id
           order_context.element 'OrderNumber',    new_order_id
           order_context.element 'OrderDate',      self.created_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
