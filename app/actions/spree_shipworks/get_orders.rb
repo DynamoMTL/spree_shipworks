@@ -6,9 +6,18 @@ module SpreeShipworks
 
     def call(params)
       response do |r|
-        r.element 'Orders' do |r|
+        r.element 'Orders' do |rr|
           ::SpreeShipworks::Orders.since_in_batches(params['start'], params['maxcount']) do |order|
-            order.to_shipworks_xml(r)
+            if order.shipments.size > 1
+              order.to_shipworks_xml(rr)
+
+              shipment = order.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
+              if shipment.state == 'ready'
+                order.to_shipworks_xml(rr, true)
+              end
+            else
+              order.to_shipworks_xml(rr)
+            end
           end
         end
       end
