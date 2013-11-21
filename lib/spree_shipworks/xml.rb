@@ -131,7 +131,7 @@ module SpreeShipworks
           end
 
           inventory_units = []
-          if preorders
+          if preorder
             shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
           else
             shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder' }
@@ -150,7 +150,7 @@ module SpreeShipworks
 
           order_context.element 'Totals' do |totals_context|
             self.adjustments.each do |adjustment|
-              if preorders
+              if preorder
                 next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name != "PreOrder"
               else
                 next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name == "PreOrder"
