@@ -150,7 +150,11 @@ module SpreeShipworks
 
           order_context.element 'Totals' do |totals_context|
             self.adjustments.each do |adjustment|
-              next if adjustment.source_type == 'Spree::Shipment' && adjustment.source.state == 'pending'
+              if preorders
+                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name != "PreOrder"
+              else
+                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name == "PreOrder"
+              end
               adjustment.extend(Adjustment)
               adjustment.to_shipworks_xml(totals_context)
             end
