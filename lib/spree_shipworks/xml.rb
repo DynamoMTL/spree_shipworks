@@ -130,11 +130,19 @@ module SpreeShipworks
             payment.to_shipworks_xml(order_context)
           end
 
+          inventory_units = []
+          if preorders
+            shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
+          else
+            shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder' }
+          end
+          inventory_units = shipment.inventory_units.map(&:variant_id)
+
           order_context.element 'Items' do |items_context|
             self.line_items.each do |item|
               next if item.quantity == 0
               next if item.product.is_gift_card?
-              next if item.product.preorderable?
+              next unless inventory_units.include? item.variant_id
               item.extend(LineItem)
               item.to_shipworks_xml(items_context) if item.variant.present?
             end
