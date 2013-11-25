@@ -119,7 +119,7 @@ module SpreeShipworks
 
       def get_shipping_method_name(order, preorder = false)
         shipment = get_shipment(order, preorder)
-        if perorder && shipment.shipping_method.try(:name) == 'PreOrder'
+        if preorder && shipment.shipping_method.try(:name) == 'PreOrder'
           shipment = get_shipment(order, false)
         end
 
