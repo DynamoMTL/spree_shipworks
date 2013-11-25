@@ -99,6 +99,20 @@ module SpreeShipworks
     end # LineItem
 
     module Order
+      def get_shipment(order, preorder = false)
+        if preorder
+          shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
+        else
+          shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder' }
+        end
+
+        shipment
+      end
+
+      def get_inventory_units(shipment)
+        shipment.inventory_units.map(&:variant_id)
+      end
+
       def to_shipworks_xml(context, preorder = false)
         context.element 'Order' do |order_context|
           new_order_id = preorder ? (SpreeShipworks::PREORDER_ORDER_ID_ADJUSTMENT + self.id) : self.id
@@ -130,13 +144,8 @@ module SpreeShipworks
             payment.to_shipworks_xml(order_context)
           end
 
-          inventory_units = []
-          if preorder
-            shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
-          else
-            shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder' }
-          end
-          inventory_units = shipment.inventory_units.map(&:variant_id)
+          shipment = get_shipment(self, preorder)
+          inventory_units = get_inventory_units(shipment)
 
           order_context.element 'Items' do |items_context|
             self.line_items.each do |item|
