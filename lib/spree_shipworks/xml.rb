@@ -113,13 +113,19 @@ module SpreeShipworks
         shipment.inventory_units.map(&:variant_id)
       end
 
+      def get_shipping_method_name(shipment)
+        shipment.shipping_method.try(:name)
+      end
+
       def to_shipworks_xml(context, preorder = false)
         context.element 'Order' do |order_context|
+          shipment = get_shipment(self, preorder)
+
           new_order_id = preorder ? (SpreeShipworks::PREORDER_ORDER_ID_ADJUSTMENT + self.id) : self.id
           order_context.element 'OrderNumber',    new_order_id
           order_context.element 'OrderDate',      self.created_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'ShippingMethod', self.shipping_method.try(:name)
+          order_context.element 'ShippingMethod', get_shipping_method_name(shipment)
           order_context.element 'StatusCode',     self.state
           order_context.element 'CustomerID',     self.user.try(:id)
 
@@ -144,7 +150,6 @@ module SpreeShipworks
             payment.to_shipworks_xml(order_context)
           end
 
-          shipment = get_shipment(self, preorder)
           inventory_units = get_inventory_units(shipment)
 
           order_context.element 'Items' do |items_context|
