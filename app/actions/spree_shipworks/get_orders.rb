@@ -11,7 +11,7 @@ module SpreeShipworks
             if order.shipments.size > 1
               order.to_shipworks_xml(rr)
 
-              shipment = order.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
+              shipment = order.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder - USPS' }
               if shipment.state == 'ready'
                 order.to_shipworks_xml(rr, true)
               end

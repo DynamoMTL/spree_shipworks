@@ -13,9 +13,9 @@ module SpreeShipworks
       order = Spree::Order.find(order_id)
 
       if preorder
-        shipment = order.shipments.detect { |s| s.shipping_method.name == 'PreOrder' && s.state == 'ready' && s.tracking.nil? }
+        shipment = order.shipments.detect { |s| s.shipping_method.name == 'PreOrder - USPS' && s.state == 'ready' && s.tracking.nil? }
       end
-      shipment ||= order.shipments.detect { |s| s.shipping_method.name != 'PreOrder' && s.state == 'ready' && s.tracking.nil? }
+      shipment ||= order.shipments.detect { |s| s.shipping_method.name != 'PreOrder - USPS' && s.state == 'ready' && s.tracking.nil? }
 
       if shipment.try(:update_attributes, { :tracking => params['tracking'] })
         response do |r|

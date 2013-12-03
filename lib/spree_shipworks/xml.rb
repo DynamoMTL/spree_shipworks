@@ -101,9 +101,9 @@ module SpreeShipworks
     module Order
       def get_shipment(order, preorder = false)
         if preorder
-          shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder' }
+          shipment = self.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder - USPS' }
         else
-          shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder' }
+          shipment = self.shipments.detect { |sh| sh.shipping_method.name != 'PreOrder - USPS' }
         end
 
         shipment
@@ -173,9 +173,9 @@ module SpreeShipworks
           order_context.element 'Totals' do |totals_context|
             self.adjustments.each do |adjustment|
               if preorder
-                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name != "PreOrder"
+                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name != "PreOrder - USPS"
               else
-                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name == "PreOrder"
+                next if adjustment.source_type == 'Spree::Shipment' && adjustment.originator.name == "PreOrder - USPS"
               end
               adjustment.extend(Adjustment)
               adjustment.to_shipworks_xml(totals_context)
