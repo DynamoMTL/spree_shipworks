@@ -12,7 +12,7 @@ module SpreeShipworks
               order.to_shipworks_xml(rr)
 
               shipment = order.shipments.detect { |sh| sh.shipping_method.name == 'PreOrder - USPS' }
-              if shipment.state == 'ready'
+              if shipment && shipment.state == 'ready'
                 order.to_shipworks_xml(rr, true)
               end
             else
