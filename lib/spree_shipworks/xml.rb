@@ -71,7 +71,7 @@ module SpreeShipworks
           i.element 'Code',      self.variant.sku                                       if self.variant.present?
           i.element 'SKU',       self.variant.sku                                       if self.variant.present?
           i.element 'Name',      self.variant.name                                      if self.product.present?
-          i.element 'Quantity',  self.quantity
+          i.element 'Quantity',  self.variant.prepaid? ? self.adjusted_quantity : self.quantity
           i.element 'UnitPrice', format("%01.2f", self.price)
           i.element 'UnitCost',  format("%01.2f", self.variant.cost_price)              if self.variant.present? && self.variant.cost_price
           i.element 'Weight',    self.variant.weight || 0.0                             if self.variant.present?
