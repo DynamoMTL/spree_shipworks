@@ -104,7 +104,7 @@ module SpreeShipworks
           order_context.element 'OrderNumber',    self.id
           order_context.element 'OrderDate',      self.created_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'ShippingMethod', self.shipping_method.try(:name_for_shipworks)
+          order_context.element 'ShippingMethod', self.shipping_method_name rescue self.shipping_method.try(:name)
           order_context.element 'StatusCode',     self.state
           order_context.element 'CustomerID',     self.user.try(:id)
 
