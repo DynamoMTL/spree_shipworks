@@ -47,7 +47,10 @@ module SpreeShipworks
         orders = relation.offset(batch_size * batch).all
         while orders.any?
           orders.each do |order|
-            next if order.only_contains_gift_cards?
+            if order.only_contains_gift_cards?
+              counter += 1
+              next
+            end
             counter += 1
             if counter > batch_size && last_updated_at != order.updated_at
               broken = true
