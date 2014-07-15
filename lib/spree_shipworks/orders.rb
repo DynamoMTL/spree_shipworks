@@ -6,7 +6,7 @@ module SpreeShipworks
     VALID_SHIPMENT_STATES = ::Spree::Shipment.state_machine.events.collect(&:name)
 
     def self.since(start_date = nil)
-      scope = Spree::Order.not_electronic_only.
+      scope = Spree::Order.
                 where(:state => VALID_STATES).where(shipment_state: 'ready').
                 order('updated_at asc')
 
